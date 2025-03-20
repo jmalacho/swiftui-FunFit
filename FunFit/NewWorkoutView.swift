@@ -43,9 +43,10 @@ struct NewWorkoutView: View {
                         Button("Log Workout", systemImage: "calendar.badge.plus", action: {
                                 //do {
                                     //let workouts = try modelContext.fetch(FetchDescriptor<Workout>())
-                                    let newWorkout = Workout( exercise: myExercise! )
-                                        modelContext.insert( newWorkout )
-                                        dismiss() //newMemberShowing = false
+                            let newWorkout = Workout( exercise: myExercise! )
+                            newWorkout.quantity = newWorkoutQuantity
+                            modelContext.insert( newWorkout )
+                            dismiss() //newMemberShowing = false
                                 /*} catch {
                                     print("Failed to initialize new workout")
                                     dismiss()

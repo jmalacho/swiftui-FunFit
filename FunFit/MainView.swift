@@ -21,26 +21,41 @@ struct MainView: View {
     @State public var seletectedTab = TabPosition.logexercise
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Exercise.name, order: .forward) public var exercises : [Exercise]
-    @Query(sort: \Workout.date, order: .forward) public var workouts : [Workout]
+    @Query(sort: \Workout.date, order: .reverse ) public var workouts : [Workout]
     @State private var newExerciseShowing = false
     @State private var newWorkoutShowing = false
-    let formatter = RelativeDateTimeFormatter()
-    
+    @State var formatter = RelativeDateTimeFormatter()
+    @State var jon = true
+    @State var dt = Date.now
 
+    init() {
+        formatter.unitsStyle = .abbreviated
+        formatter.dateTimeStyle = .named
+    }
+    
     var body: some View {
         TabView(selection: $seletectedTab) {
             VStack {
                 Text("My Workouts").font(.largeTitle).padding()
                 NavigationStack {
                     List(workouts) { workout in
-                        //NavigationLink( destination: WorkoutDetailsView( workout: workout) ) {
+                        NavigationLink( destination: WorkoutDetailsView( workout: workout ) ) {
                         HStack {
-                            Text( "\(formatter.localizedString(for: workout.date, relativeTo: Date.now)):  \(workout.quantity)\(workout.exercise.units != "" ? " " : "")\(workout.exercise.units) \(workout.exercise.name)" )
+                            Text( "\(formatter.localizedString(for: workout.date, relativeTo: dt)):  \(workout.quantity)\(workout.exercise.units != "" ? " " : "")\(workout.exercise.units) \(workout.exercise.name)" )
                             }
-                        //}
+                            Spacer()
+                            Text(" (1)")
+                                .foregroundStyle(.green)
+                        }
+                    }.refreshable {
+                        dt = Date.now
+                        print("Refreshed?")
+                    }.onAppear() {
+                        dt = Date.now
                     }
                 }
                 Spacer()
+
                 Button("Log *new* Workout", systemImage: "plus.app", action: {
                     newWorkoutShowing = true
                 }).buttonStyle(.borderedProminent).tint(.green)
@@ -80,7 +95,10 @@ struct MainView: View {
             VStack {
                 Text("🍻").font(.largeTitle)
             }.tabItem { Label("Relax", systemImage: "gamecontroller")}
-        }//Tabview
+        }.onChange(of: seletectedTab, initial: true) { _,arg  in
+            dt = Date.now
+        }
+        //Tabview
     } //Body
 } //MainView
  
