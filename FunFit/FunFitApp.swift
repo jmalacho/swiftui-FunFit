@@ -4,6 +4,8 @@
 //
 //  Created by Jon Malachowski on 3/16/25.
 //
+// https://stackoverflow.com/questions/58733003/how-to-create-textfield-that-only-accepts-numbers
+// https://www.youtube.com/watch?v=fvR4oztY87Q&ab_channel=Rebeloper-RebelDeveloper
 
 import SwiftUI
 import SwiftData
@@ -12,7 +14,7 @@ import SwiftData
 struct FunFitApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Exercise.self, Workout.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -25,7 +27,7 @@ struct FunFitApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
         }
         .modelContainer(sharedModelContainer)
     }
