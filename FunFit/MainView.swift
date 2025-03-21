@@ -3,9 +3,11 @@
 //  FunFit
 //
 //  Created by Jon Malachowski on 3/16/25.
-//  2: Add fun
-//  3: Log fun
-// 
+//  - Add Workout details edit page
+//  - Add fun
+//    -- add point total update
+//  - Log fun
+//
 
 import SwiftUI
 import SwiftData

@@ -64,7 +64,7 @@ struct ExerciseDetailsView: View {
             }
         } else {
             VStack {
-                HStack { Text("Exercise Deatils").padding()
+                HStack { Text("Exercise Details").padding()
                     Spacer()
                     Button( action: {
                         editing=true
@@ -77,7 +77,12 @@ struct ExerciseDetailsView: View {
                 Text("\(exercise.num_per_point) \(exercise.units)")
                 Spacer()
                 Button( action: {
-                    modelContext.delete( exercise )
+                    do {
+                        modelContext.delete( exercise )
+                        try modelContext.save()
+                    } catch {
+                        print("Failed to delete exercise")
+                    }
                     dismiss()
                 }, label: { Text("🗑️ Delete Exercise") }).tint(.red).buttonStyle(.borderedProminent)
             } //vstack

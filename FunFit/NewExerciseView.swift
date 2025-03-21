@@ -54,22 +54,20 @@ struct NewExerciseView: View {
                         
                     }
                     Button("Add Exercise", systemImage: "person.badge.plus", action: {
-                            do {
-                                let exercises = try modelContext.fetch(FetchDescriptor<Exercise>())
-                                if !exercises.contains(where: { $0.name == newExerciseName } ) {
-                                    let newExercise = Exercise(
-                                        name: newExerciseName,
-                                        units: newExerciseUnits,
-                                        num_per_point: newExerciseFactor
-                                    )
-                                    modelContext.insert( newExercise )
-                                    try modelContext.save()
-                                    dismiss() //newMemberShowing = false
-                                }
-                            } catch {
-                                print("Failed to initialize new ")
-                                dismiss() //newMemberShowing = false
+                        do {
+                            let exercises = try modelContext.fetch(FetchDescriptor<Exercise>())
+                            if !exercises.contains(where: { $0.name == newExerciseName } ) {
+                                let newExercise = Exercise(
+                                    name: newExerciseName,
+                                    units: newExerciseUnits,
+                                    num_per_point: newExerciseFactor
+                                )
+                                modelContext.insert( newExercise )
+                                try modelContext.save()
                             }
+                        } catch {
+                            print("Failed to initialize new Exercise")
+                        }
                         dismiss()
                     }).buttonStyle(.borderedProminent).tint(.green).padding()
                 } //Vstack

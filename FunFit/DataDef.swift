@@ -36,7 +36,7 @@ final class Workout : Identifiable {
     
     init(exercise: Exercise) {
         self.exercise_name = exercise.name
-        self.exercise_units = exercise_units
+        self.exercise_units = exercise.units
         self.exercise_num_per_point = exercise.num_per_point
     }
 }
