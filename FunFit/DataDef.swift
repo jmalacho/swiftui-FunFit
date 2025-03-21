@@ -14,18 +14,36 @@ final class Exercise : Identifiable {
     @Attribute(.unique) var name: String
     var num_per_point : Int = 1
     var units : String = ""
-    init(name: String) {
-        self.name   = name
+    init(name: String, units: String, num_per_point: Int) {
+        self.name = name
+        self.units = units
+        self.num_per_point = num_per_point
     }
 }
 
 @Model
 final class Workout : Identifiable {
+    var exercise_name = ""
+    var exercise_units = ""
+    var exercise_num_per_point = 1
+    
     var date: Date = Date.now
-    var exercise: Exercise
     var quantity: Int = 1
-    init(exercise: Exercise  ) {
-        self.exercise = exercise
+    
+    var points: Int {
+        return quantity / exercise_num_per_point
+    }
+    
+    init(exercise: Exercise) {
+        self.exercise_name = exercise.name
+        self.exercise_units = exercise_units
+        self.exercise_num_per_point = exercise.num_per_point
     }
 }
-    
+
+@Model
+final class Settings : Identifiable {
+    var current_points = 0
+    var lifetime_points = 0
+    init() {}
+}

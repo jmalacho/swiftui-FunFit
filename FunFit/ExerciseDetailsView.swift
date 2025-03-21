@@ -87,9 +87,7 @@ struct ExerciseDetailsView: View {
 }
 
 #Preview {
-    let e = Exercise(name: "Walking")
-    e.units = "steps"
-    e.num_per_point = 5000
+    let e = Exercise(name: "Walk", units: "steps", num_per_point: 5000)
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Exercise.self, configurations: config)
     container.mainContext.insert(e)

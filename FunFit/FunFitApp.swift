@@ -14,12 +14,25 @@ import SwiftData
 struct FunFitApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Exercise.self, Workout.self
+            Exercise.self, Workout.self, Settings.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            let modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            let mainContext = modelContainer.mainContext
+            let mySettingsArr = try mainContext.fetch(FetchDescriptor<Settings>())
+            if mySettingsArr.isEmpty {
+                print("Initializing Settings")
+                let mySettings = Settings()
+                mainContext.insert( mySettings )
+                try mainContext.save()
+                print("Initializing Settings Done")
+            } else {
+                let mySettings = mySettingsArr.first
+                print("Loaded settings (\( mySettings!.current_points )/\( mySettings!.lifetime_points ))")
+            }
+            return modelContainer
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }

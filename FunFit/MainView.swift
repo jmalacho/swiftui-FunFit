@@ -41,10 +41,10 @@ struct MainView: View {
                     List(workouts) { workout in
                         NavigationLink( destination: WorkoutDetailsView( workout: workout ) ) {
                         HStack {
-                            Text( "\(formatter.localizedString(for: workout.date, relativeTo: dt)):  \(workout.quantity)\(workout.exercise.units != "" ? " " : "")\(workout.exercise.units) \(workout.exercise.name)" )
+                            Text( "\(formatter.localizedString(for: workout.date, relativeTo: dt)):  \(workout.quantity)\(workout.exercise_units != "" ? " " : "")\(workout.exercise_units) \(workout.exercise_name)" )
                             }
                             Spacer()
-                            Text(" (1)")
+                            Text(" (\(workout.points))")
                                 .foregroundStyle(.green)
                         }
                     }.refreshable {
@@ -57,13 +57,12 @@ struct MainView: View {
                 Spacer()
 
                 Button("Log *new* Workout", systemImage: "plus.app", action: {
-                    newWorkoutShowing = true
+                    if exercises.isEmpty {
+                        seletectedTab = TabPosition.myexercises
+                    } else {
+                        newWorkoutShowing = true
+                    }
                 }).buttonStyle(.borderedProminent).tint(.green)
-            }
-            .onAppear {
-                if exercises.isEmpty {
-                    seletectedTab = TabPosition.myexercises
-                }
             }.sheet(isPresented: $newWorkoutShowing) {
                 NewWorkoutView()
             }
@@ -104,9 +103,7 @@ struct MainView: View {
  
 
 #Preview {
-    let e = Exercise(name: "Walking")
-    e.units = "steps"
-    e.num_per_point = 5000
+    let e = Exercise(name: "Walking", units: "steps", num_per_point: 5000)
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Exercise.self, configurations: config)
     container.mainContext.insert(e)
