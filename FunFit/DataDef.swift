@@ -47,3 +47,12 @@ final class Settings : Identifiable {
     var lifetime_points = 0
     init() {}
 }
+
+import AudioToolbox
+
+func playOpenBeer() {
+    let soundURL = Bundle.main.url(forResource: "opening-beer-can", withExtension: "mp3")!
+    var soundID: SystemSoundID = 0
+    AudioServicesCreateSystemSoundID(soundURL as CFURL, &soundID)
+    AudioServicesPlaySystemSound(soundID)
+}

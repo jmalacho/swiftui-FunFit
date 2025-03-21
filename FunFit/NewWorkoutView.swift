@@ -12,6 +12,7 @@ struct NewWorkoutView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Exercise.name, order: .forward) public var exercises : [Exercise]
+    @Query() public var settings : [Settings]
     @State var myExercise : Exercise?
     @State var mySelected = ""
     @State var newWorkoutQuantity = 0
@@ -41,16 +42,11 @@ struct NewWorkoutView: View {
                                 .textFieldStyle(.roundedBorder)
                         }
                         Button("Log Workout", systemImage: "calendar.badge.plus", action: {
-                                //do {
-                                    //let workouts = try modelContext.fetch(FetchDescriptor<Workout>())
                             let newWorkout = Workout( exercise: myExercise! )
                             newWorkout.quantity = newWorkoutQuantity
                             modelContext.insert( newWorkout )
-                            dismiss() //newMemberShowing = false
-                                /*} catch {
-                                    print("Failed to initialize new workout")
-                                    dismiss()
-                                }*/
+                            settings.first!.current_points += newWorkout.points
+                            settings.first!.lifetime_points += newWorkout.points
                             dismiss()
                         }).buttonStyle(.borderedProminent).tint(.green).padding()
                     }

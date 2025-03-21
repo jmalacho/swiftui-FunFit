@@ -24,6 +24,7 @@ struct MainView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Exercise.name, order: .forward) public var exercises : [Exercise]
     @Query(sort: \Workout.date, order: .reverse ) public var workouts : [Workout]
+    @Query() public var settings : [Settings]
     @State private var newExerciseShowing = false
     @State private var newWorkoutShowing = false
     @State var formatter = RelativeDateTimeFormatter()
@@ -38,7 +39,7 @@ struct MainView: View {
     var body: some View {
         TabView(selection: $seletectedTab) {
             VStack {
-                Text("My Workouts").font(.largeTitle).padding()
+                Text("🚴 My Workouts 🏋️").font(.largeTitle).padding()
                 NavigationStack {
                     List(workouts) { workout in
                         NavigationLink( destination: WorkoutDetailsView( workout: workout ) ) {
@@ -72,7 +73,7 @@ struct MainView: View {
             .tag( TabPosition.logexercise )
 
             VStack {
-                Text("🏃 Exercise List 🏃").font(.largeTitle).padding()
+                Text("⚽️ Exercise List 🏸").font(.largeTitle).padding()
                 NavigationStack {
                     List(exercises) { exercise in
                         NavigationLink( destination: ExerciseDetailsView( exercise: exercise) ) {
@@ -94,10 +95,32 @@ struct MainView: View {
             .tag( TabPosition.myexercises )
             
             VStack {
-                Text("🍻").font(.largeTitle)
-            }.tabItem { Label("Relax", systemImage: "gamecontroller")}
+                Text("🎮 Relax 🍻").font(.largeTitle).padding()
+                Text("Current points: \(settings.first!.current_points)")
+                Spacer()
+                HStack{ Spacer()
+                    Button {
+                        print("Relaxation requested")
+                        playOpenBeer()
+                        settings.first!.current_points -= 1
+                        if settings.first!.current_points <= 0 {
+                            seletectedTab = TabPosition.logexercise
+                        }
+                    } label: {
+                        Image("Beer")
+                    }
+                    Spacer()
+                }
+                // }
+                Spacer()
+            }
+            .tabItem { Label("Relax", systemImage: "gamecontroller")}
+            .tag( TabPosition.relax )
         }.onChange(of: seletectedTab, initial: true) { _,arg  in
             dt = Date.now
+            if (seletectedTab == TabPosition.relax && settings.first!.current_points <= 0) {
+                seletectedTab = TabPosition.logexercise
+            }
         }
         //Tabview
     } //Body

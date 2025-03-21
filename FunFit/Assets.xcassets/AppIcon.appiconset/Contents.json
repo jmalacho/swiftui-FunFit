@@ -1,6 +1,7 @@
 {
   "images" : [
     {
+      "filename" : "funfit-happybear.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
