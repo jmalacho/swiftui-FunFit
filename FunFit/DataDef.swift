@@ -56,3 +56,39 @@ func playOpenBeer() {
     AudioServicesCreateSystemSoundID(soundURL as CFURL, &soundID)
     AudioServicesPlaySystemSound(soundID)
 }
+
+
+
+
+
+
+
+extension Date {
+    public enum Weekday: Int {
+        case sunday = 1, monday, tuesday, wednesday, thursday, friday, saturday
+    }
+    
+    public func next(_ weekday: Weekday,
+                     direction: Calendar.SearchDirection = .forward,
+                     considerToday: Bool = false) -> Date
+    {
+        let calendar = Calendar(identifier: .gregorian)
+        let components = DateComponents(weekday: weekday.rawValue)
+
+        if considerToday &&
+            calendar.component(.weekday, from: self) == weekday.rawValue
+        {
+            return self
+        }
+
+        return calendar.nextDate(after: self,
+                                 matching: components,
+                                 matchingPolicy: .nextTime,
+                                 direction: direction)!
+    }
+    
+    var mondayOfTheSameWeek: Date {
+        Date().next(.monday, direction: .backward)
+        //Calendar(identifier:  .gregorian).dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: self).date!
+    }
+}
