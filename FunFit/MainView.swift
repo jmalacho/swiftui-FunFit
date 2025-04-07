@@ -8,6 +8,7 @@
 
 import SwiftUI
 import SwiftData
+//import SwiftUIIntrospect
 
 enum TabPosition: Hashable {
     case logexercise
@@ -31,8 +32,8 @@ struct MainView: View {
     
     init() {
         MainView.formatter.unitsStyle = .abbreviated
+        MainView.formatter.dateTimeStyle = .named
     }
-    
     
     public func splitWorkouts( age: String) -> [Workout] {
         return self.workouts.filter( { workout in
@@ -65,7 +66,7 @@ struct MainView: View {
                 ForEach( myWorkouts ) { workout in
                     NavigationLink( destination: WorkoutDetailsView( workout: workout ) ) {
                         HStack {
-                            Text( "\(formatter.localizedString(for: workout.date, relativeTo: Date.now)):  \(workout.quantity)\(workout.exercise_units != "" ? " " : "")\(workout.exercise_units) \(workout.exercise_name)" )
+                            Text( "\( age != "today" ? formatter.localizedString(for: workout.date, relativeTo: Date.now) + ":" : "" )  \(workout.quantity)\(workout.exercise_units != "" ? " " : "")\(workout.exercise_units) \(workout.exercise_name)" )
                         }
                         Spacer()
                         Text(" (\(workout.points))")
@@ -92,6 +93,7 @@ struct MainView: View {
             Tab( "Log Workout", systemImage: "calendar.badge.plus", value: .logexercise  ) {
                 VStack {
                     Text("🚴 My Workouts 🏋️").font(.largeTitle).padding()
+                    
                     NavigationStack {
                         List{
                             ForEach(["today","this week","older"], id:\.self) { age in
@@ -102,20 +104,27 @@ struct MainView: View {
                                 }
                             } //for each age
                         } //list
-                        
                         Spacer()
-                        
-                        Button("Log *new* Workout", systemImage: "plus.app", action: {
-                            if exercises.isEmpty {
-                                selectedTab = TabPosition.myexercises
-                            } else {
-                                newWorkoutShowing = true
-                            }
-                        }).buttonStyle(.borderedProminent).tint(.green)
-                    }
-                }.sheet(isPresented: $newWorkoutShowing) {
-                    NewWorkoutView()
-                }
+                        ZStack {
+                            Image("WorkoutBackground").resizable().scaledToFit()
+                            VStack {
+                                Spacer()
+                                Button("Log *new* Workout", systemImage: "plus.app", action: {
+                                    print("Button Pressed")
+                                    if exercises.isEmpty {
+                                        selectedTab = TabPosition.myexercises
+                                    } else {
+                                        newWorkoutShowing = true
+                                    }
+                                    print(newWorkoutShowing)
+                                }).buttonStyle(.borderedProminent).tint(.green).padding()
+                            } // VStack
+                        } //ZStack
+                    }.scrollContentBackground(.hidden)
+                        .presentationBackground(.ultraThinMaterial)
+                    //Text("footer")                .background(Image("WorkoutBackground").resizable().edgesIgnoringSafeArea(.all).aspectRatio(contentMode: .fit).frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
+                    
+                }.sheet(isPresented: $newWorkoutShowing) { NewWorkoutView() }
             } //Tab
             
             Tab( "Create Exercises", systemImage: "figure.run", value: .myexercises  ) {
@@ -134,7 +143,7 @@ struct MainView: View {
                     Button("Define *new* Exercise", systemImage: "plus.app", action: {
                         newExerciseShowing = true
                     }).buttonStyle(.borderedProminent).tint(.green)
-                } //Vstack
+                }
                 .sheet(isPresented: $newExerciseShowing) {
                     NewExerciseView()
                 }
@@ -160,7 +169,7 @@ struct MainView: View {
                         }.buttonStyle(.bordered)
                         Spacer()
                     }.padding()
-                }
+                } //Vstack
                 .background(
                     Image("RelaxBackground")
                         .resizable()
