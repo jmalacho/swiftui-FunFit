@@ -20,6 +20,8 @@ enum TabPosition: Hashable {
 @MainActor
 struct MainView: View {
     static let formatter = RelativeDateTimeFormatter()
+    @State var secret_sequence_i = 0
+    let secret_sequence : [ TabPosition ] = [ .myexercises, .logexercise, .myexercises, .logexercise, .relax ]
     @State public var selectedTab = TabPosition.logexercise
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Exercise.name, order: .forward) public var exercises : [Exercise]
@@ -29,6 +31,7 @@ struct MainView: View {
     @State private var newWorkoutShowing = false
     @State var jon = true
     @State var dt = Date.now
+    @State var testingTabEnabled = false
     
     init() {
         MainView.formatter.unitsStyle = .abbreviated
@@ -178,27 +181,43 @@ struct MainView: View {
                         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
                 )
             }
-            
-            Tab( "Test", systemImage: "testtube.2", value: .test  ) {
-                VStack {
-                    Spacer()
+            if testingTabEnabled {
+                Tab( "Test", systemImage: "testtube.2", value: .test  ) {
                     HStack {
                         Spacer()
-                        Button("Test", systemImage:"testtube.2",action: {
-                            playOpenBeer()
-                        })
+                        VStack {
+                            Spacer()
+                            Button("PlayOpenBeer", systemImage:"testtube.2",action: {
+                                playOpenBeer()
+                            }).buttonStyle(.bordered).padding()
+                            Button("Hide Testing", systemImage:"testtube.2",action: {
+                                testingTabEnabled = false
+                            }).buttonStyle(.bordered).padding()
+                            Spacer()
+                        }
                         Spacer()
                     }
-                    Spacer()
-                }
-            } //Tab
+                } //Tab
+            }
         }.onChange(of: selectedTab, initial: true) { _,arg  in
-                      dt = Date.now
-                      if let s = settings.first {
-                          if (selectedTab == TabPosition.relax && s.current_points <= 0) {
-                              selectedTab = TabPosition.logexercise
-                          }
-                      }
+            dt = Date.now
+            if selectedTab == secret_sequence[secret_sequence_i] {
+                secret_sequence_i+=1
+                if secret_sequence_i == secret_sequence.count {
+                    playOpenBeer()
+                    secret_sequence_i = 0
+                    testingTabEnabled = true
+                }
+            } else {
+                secret_sequence_i = 0
+            }
+            print( secret_sequence_i )
+            
+            if let s = settings.first {
+                if (selectedTab == TabPosition.relax && s.current_points <= 0) {
+                    selectedTab = TabPosition.logexercise
+                }
+            }
         }
     } //Body
                     
